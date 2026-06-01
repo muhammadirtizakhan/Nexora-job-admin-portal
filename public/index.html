@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexora Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;600;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="bg-layer">
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login-wrap">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo-wrap"><div class="login-logo">NX</div></div>
+      <h1 class="login-title">Nexora Admin</h1>
+      <p class="login-sub">Secure access to your project console</p>
+      <div class="login-secure-badge">SSL Encrypted &amp; Protected</div>
+    </div>
+    <div class="login-body">
+      <div class="field">
+        <label>Email Address</label>
+        <div class="field-input-wrap">
+          <span class="field-input-icon">✉</span>
+          <input type="email" id="loginEmail" placeholder="admin@nexora.com" autocomplete="username">
+        </div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="field-input-wrap">
+          <span class="field-input-icon">🔒</span>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+        </div>
+      </div>
+      <button class="login-btn" id="loginBtn">Sign In to Console</button>
+      <div id="loginError" class="login-err"></div>
+      <div class="login-divider">Protected workspace</div>
+      <div class="login-trust">
+        <div class="trust-item"><span class="trust-icon">🛡</span> 256-bit AES</div>
+        <div class="trust-item"><span class="trust-icon">🔐</span> Zero-knowledge</div>
+        <div class="trust-item"><span class="trust-icon">⚡</span> Nexora v2.0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="adminApp" style="display:none;">
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <div class="brand-icon">N</div>
+        <div><div class="brand-text">Nexora</div><div class="brand-badge">Admin Console</div></div>
+      </div>
+    </div>
+    <div class="nav-body">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" data-tab="dashboard"><div class="nav-icon">◻</div>Dashboard</div>
+      <div class="nav-section-label">Manage</div>
+      <div class="nav-item" data-tab="projects"><div class="nav-icon">🗂</div>Projects</div>
+      <div class="nav-item" data-tab="roles"><div class="nav-icon">🎯</div>All Roles</div>
+      <div class="nav-item" data-tab="applications"><div class="nav-icon">👥</div>Users</div>
+      <div class="nav-section-label">Create</div>
+      <div class="nav-item" data-tab="add-project"><div class="nav-icon">＋</div>New Project</div>
+      <div class="nav-item" data-tab="assign-role"><div class="nav-icon">🔗</div>Assign Role</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="admin-profile">
+        <div class="admin-avatar" id="sidebarAvatar">A</div>
+        <div class="admin-info">
+          <div class="admin-name" id="sidebarName">Administrator</div>
+          <div class="admin-role" id="sidebarRole">Super Admin</div>
+        </div>
+        <div class="admin-status-dot"></div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">↩ Sign Out</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+          <div class="ham-line"></div><div class="ham-line"></div><div class="ham-line"></div>
+        </button>
+        <div class="topbar-left">
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Welcome back, Administrator</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="clock-badge" id="liveClock">--:--</div>
+        <div class="topbar-pill">Projects <strong id="statProjects">0</strong></div>
+        <div class="topbar-pill">Roles <strong id="statJobs">0</strong></div>
+        <div class="topbar-pill">Users <strong id="statApplications">0</strong></div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <div id="dashboardPanel" class="panel active">
+        <div class="dash-stats">
+          <div class="stat-card s-pink"><div class="stat-card-icon" style="color:var(--pink);">◈</div><div class="stat-eyebrow"><span class="stat-dot"></span>Total Projects</div><div class="stat-value" id="dashProjectCount">0</div><div class="stat-desc">All time</div></div>
+          <div class="stat-card s-violet"><div class="stat-card-icon" style="color:var(--violet-2);">⬡</div><div class="stat-eyebrow"><span class="stat-dot"></span>Open Roles</div><div class="stat-value" id="dashJobCount">0</div><div class="stat-desc">Across projects</div></div>
+          <div class="stat-card s-cyan"><div class="stat-card-icon" style="color:var(--cyan);">◎</div><div class="stat-eyebrow"><span class="stat-dot"></span>Registered Users</div><div class="stat-value" id="dashAppCount">0</div><div class="stat-desc">All time</div></div>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-card"><div class="chart-title">Projects per Month</div><canvas id="monthlyChart"></canvas></div>
+          <div class="chart-card"><div class="chart-title">Completion Distribution</div><canvas id="completionChart"></canvas></div>
+        </div>
+      </div>
+      <!-- PROJECTS -->
+      <div id="projectsPanel" class="panel">
+        <div class="card">
+          <div class="card-header"><div class="card-title">All Projects</div></div>
+          <div class="tbl-wrap" id="projectsTable"></div>
+          <div class="mobile-cards" id="projectsMobile"></div>
+        </div>
+      </div>
+      <!-- ROLES -->
+      <div id="rolesPanel" class="panel">
+        <div class="card">
+          <div class="card-header"><div class="card-title">All Roles</div></div>
+          <div class="tbl-wrap" id="rolesTable"></div>
+          <div class="mobile-cards" id="rolesMobile"></div>
+        </div>
+      </div>
+      <!-- USERS -->
+      <div id="applicationsPanel" class="panel">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Registered Users</div></div>
+          <div class="tbl-wrap" id="applicationsTable"></div>
+          <div class="mobile-cards" id="applicationsMobile"></div>
+        </div>
+      </div>
+      <!-- ADD PROJECT -->
+      <div id="addProjectPanel" class="panel">
+        <div class="card">
+          <div class="form-block">
+            <div class="block-title">Project Details</div>
+            <div class="g2">
+              <div class="fg"><label>Project Name <span class="req">*</span></label><input type="text" id="newProjName" placeholder="Enter project name"></div>
+              <div class="fg"><label>Category</label><input type="text" id="newProjCategory" placeholder="e.g. Web App"></div>
+            </div>
+            <div class="g3">
+              <div class="fg"><label>Completion %</label><div class="slider-row"><input type="range" id="newProjRange" min="0" max="100" value="30"><input type="number" id="newProjNumber" value="30" min="0" max="100"></div></div>
+              <div class="fg"><label>Status</label><select id="newProjStatus"><option>Unpaid</option><option>Paid</option></select></div>
+              <div class="fg"><label>Purpose</label><select id="newProjPurpose"><option>Practice</option><option>Client</option></select></div>
+            </div>
+            <div class="fg"><label>Description</label><textarea id="newProjDesc" rows="3" placeholder="Brief project description..."></textarea></div>
+            <div class="fg"><label>Image URL</label><input type="text" id="newProjImage" placeholder="https://..."></div>
+            <div class="fg">
+              <label>Requirements Document</label>
+              <div class="upload-box" id="docUploadBox">📄 Click to upload PDF or DOC</div>
+              <input type="file" id="docFileInput" accept=".pdf,.doc,.docx" style="display:none">
+              <div id="docInfoArea" class="doc-info-row" style="display:none;"><span id="docFileName" style="font-size:0.78rem;color:var(--text-2);"></span><button id="removeDocBtn" class="remove-btn">Remove</button></div>
+              <div id="uploadStatus" class="upload-status"></div>
+              <input type="hidden" id="projDocUrl">
+            </div>
+          </div>
+          <div class="form-footer"><button class="btn-primary" id="createProjectBtn">Create Project</button></div>
+        </div>
+      </div>
+      <!-- ASSIGN ROLE -->
+      <div id="assignRolePanel" class="panel">
+        <div class="card">
+          <div class="form-block">
+            <div class="block-title">Select Project</div>
+            <div class="fg"><label>Project</label><select id="projectSelect"><option value="">-- Select Project --</option></select></div>
+            <div id="selectedProjectPreview" class="proj-preview" style="display:none;"><span style="color:var(--emerald);">✓</span><strong id="previewProjectName"></strong><span class="badge badge-client">In Progress</span><span id="previewProjectCompletion" style="color:var(--text-3);font-size:0.8rem;"></span></div>
+          </div>
+          <div class="form-block">
+            <div class="block-title">Role Details</div>
+            <div class="g2">
+              <div class="fg"><label>Role Name</label><input type="text" id="jobRoleTitle" placeholder="e.g. Frontend Developer"></div>
+              <div class="fg"><label>Category</label><select id="roleCategory"><option>Frontend</option><option>Backend</option><option>Full Stack</option><option>UI/UX</option><option>AI/ML</option><option>DevOps</option></select></div>
+            </div>
+            <div class="fg"><label>Description</label><textarea id="roleDescription" rows="3" placeholder="Role responsibilities..."></textarea></div>
+            <div class="g2">
+              <div class="fg"><label>Skills</label><input type="text" id="roleSkills" placeholder="React, Node.js, TypeScript..."></div>
+              <div class="fg"><label>Priority</label><select id="priorityLevel"><option>Low</option><option selected>Medium</option><option>High</option><option>Critical</option></select></div>
+            </div>
+            <div class="fg"><label>Poster URL</label><input type="text" id="roleImageUrl" placeholder="https://..."></div>
+          </div>
+          <div class="form-footer"><button class="btn-primary" id="assignJobBtn">Assign Role</button></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+
+<!-- EDIT ROLE MODAL -->
+<div id="editRoleModal" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Edit Role</h3><button class="close-btn" onclick="closeEditRoleModal()">×</button></div>
+    <input type="hidden" id="editRoleId">
+    <div class="fg"><label>Role Name</label><input type="text" id="editRoleTitle"></div>
+    <div class="fg"><label>Category</label><select id="editRoleCategory"><option>Frontend</option><option>Backend</option><option>Full Stack</option><option>UI/UX</option><option>AI/ML</option><option>DevOps</option></select></div>
+    <div class="fg"><label>Description</label><textarea id="editRoleDesc" rows="3"></textarea></div>
+    <div class="fg"><label>Skills</label><input type="text" id="editRoleSkills"></div>
+    <div class="fg"><label>Priority</label><select id="editRolePriority"><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select></div>
+    <div class="form-footer" style="padding:1rem 0 0;border:none;"><button class="btn-ghost" onclick="closeEditRoleModal()">Cancel</button><button class="btn-primary" onclick="saveRoleUpdate()">Save Changes</button></div>
+  </div>
+</div>
+
+<!-- EDIT PROJECT MODAL -->
+<div id="updateModal" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Update Project</h3><button class="close-btn" onclick="closeUpdateModal()">×</button></div>
+    <input type="hidden" id="updateProjectId">
+    <div class="g2"><div class="fg"><label>Name</label><input type="text" id="updateProjName"></div><div class="fg"><label>Category</label><input type="text" id="updateProjCategory"></div></div>
+    <div class="fg"><label>Completion %</label><div class="slider-row"><input type="range" id="updateProjRange" min="0" max="100"><input type="number" id="updateProjNumber" min="0" max="100"></div></div>
+    <div class="g2"><div class="fg"><label>Status</label><select id="updateProjStatus"><option>Unpaid</option><option>Paid</option></select></div><div class="fg"><label>Purpose</label><select id="updateProjPurpose"><option>Practice</option><option>Client</option></select></div></div>
+    <div class="fg"><label>Description</label><textarea id="updateProjDesc" rows="3"></textarea></div>
+    <div class="fg"><label>Image URL</label><input type="text" id="updateProjImage"></div>
+    <div class="form-footer" style="padding:1rem 0 0;border:none;"><button class="btn-ghost" onclick="closeUpdateModal()">Cancel</button><button class="btn-primary" onclick="saveProjectUpdate()">Save Changes</button></div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="successPopup" class="success-overlay">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h3>Done!</h3>
+    <p id="popupMessage">Operation completed.</p>
+    <button onclick="closePopup()">Continue</button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="/script.js"></script>
+</body>
+</html>
