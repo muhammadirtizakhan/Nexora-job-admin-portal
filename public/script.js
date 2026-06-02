@@ -371,15 +371,47 @@ document.querySelectorAll(".nav-item").forEach(item => {
     closeSidebar();
   });
 });
-// Auto-refresh background mein (user ko pata nahi chalega)
-setInterval(async () => {
+// ─── AUTO REFRESH (Background - User ko pata nahi chalega) ───────────────────
+let lastDataHash = '';
+
+async function silentAdminRefresh() {
     try {
-        const res = await fetch('/api/projects');
-        const json = await res.json();
-        if (json.success && JSON.stringify(currentProjects) !== JSON.stringify(json.data)) {
-            currentProjects = json.data;
-            renderPortalJobs();
-            renderCategories();
+        // Fetch fresh data
+        const [freshProjects, freshRoles, freshUsers] = await Promise.all([
+            fetch('/api/projects', { headers: { 'Authorization': `Bearer ${TOKEN}` } }).then(r => r.json()),
+            fetch('/api/roles', { headers: { 'Authorization': `Bearer ${TOKEN}` } }).then(r => r.json()),
+            fetch('/api/users', { headers: { 'Authorization': `Bearer ${TOKEN}` } }).then(r => r.json())
+        ]);
+        
+        const newHash = JSON.stringify({ projects: freshProjects, roles: freshRoles, users: freshUsers });
+        
+        // Agar change hua toh update karo
+        if (newHash !== lastDataHash) {
+            projects = freshProjects;
+            projectRoles = freshRoles;
+            applications = freshUsers;
+            
+            // Sab tables update ho jayenge
+            renderProjectsTable();
+            renderRolesTable();
+            renderApplicationsTable();
+            updateStats();
+            updateCharts();
+            populateProjectSelect();
+            
+            lastDataHash = newHash;
+            console.log('✅ Admin panel auto-updated');
         }
-    } catch (e) {}
-}, 15000);
+    } catch(e) {
+        // Silent fail - user ko pata nahi chalega
+        console.debug('Auto-refresh failed:', e);
+    }
+}
+
+// Har 15 seconds mein background refresh
+setInterval(silentAdminRefresh, 15000);
+
+// Pehla hash set karo
+setTimeout(() => {
+    lastDataHash = JSON.stringify({ projects, roles: projectRoles, users: applications });
+}, 1000);
